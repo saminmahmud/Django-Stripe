@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Buy a Product</title></head>
+<link rel="stylesheet" href="https://matcha.mizu.sh/matcha.css">
+<body>
+	<form action="{% url 'logout' %}" method="post">
+		{% csrf_token %}
+		<button type="submit">Log out</button>
+	</form>
+
+  {% if request.GET.success %}
+    <p style="color:green">🎉 Payment successful! (session {{ request.GET.session_id }})</p>
+  {% elif request.GET.canceled %}
+    <p style="color:orange">❌ Payment canceled.</p>
+  {% endif %}
+<h1>Products:</h1>
+  <form method="post">
+    {% csrf_token %}
+    
+    {% comment %} {% for price in prices %}
+      <div style="margin-bottom:1em; padding:0.5em; border:1px solid #ddd;">
+        <div>
+          <h3>{{ price.product.name }}</h3>
+          <p>
+            {{ price.unit_amount }}
+          </p>
+        </div>
+        <button type="submit" name="price_id" value="{{ price.id }}">
+          Buy now
+        </button> 
+      </div>
+    {% endfor %}{% endcomment %}
+    
+      <div>
+        <h3>Mouse</h3>
+        <p>{{ price }} $</p>
+      </div>
+      <button type="submit" >
+        Buy now
+      </button>
+  </form>
+
+</body>
+</html>
