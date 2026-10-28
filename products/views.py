@@ -52,6 +52,8 @@ stripe.api_key = settings.STRIPE_API_KEY
 @login_required
 def products(request):
     PRICE = 500  # $5.00
+    orders = Order.objects.filter(user=request.user)
+
     if request.method == 'POST':
         order = Order.objects.create(
             user=request.user,
@@ -81,7 +83,7 @@ def products(request):
         order.save()
 
         return redirect(checkout_session.url, code=303)
-    return render(request, 'products.html', {'price': PRICE})
+    return render(request, 'products.html', {'price': PRICE, 'orders': orders})
 
 
 @csrf_exempt
@@ -126,7 +128,7 @@ def refund_order(request, order_id):
         return HttpResponseBadRequest("No payment intent associated with this order.")
 
     try:
-        refund = stripe.Refund.create(
+        stripe.Refund.create(
             payment_intent=order.payment_intent_id,
         )
     except stripe.error.StripeError as e:

@@ -40,5 +40,30 @@
       </button>
   </form>
 
+
+
+{% if user.is_superuser %}
+<br>
+<hr>
+    <h2>Admin Section</h2>
+    <p>Your Orders:</p>
+
+  <ul>
+    {% for order in orders reversed %}
+      <li style="margin-bottom:1em; padding:0.5em; border:1px solid #ddd;">
+        Order #{{ order.pk }} - Status: {{ order.get_status_display }} 
+        {% if order.status == 'PAID' %}
+          <form action="{% url 'refund_order' order.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+              <button type="submit">Request Refund</button>
+          </form>
+        {% endif %}
+      </li>
+    {% empty %}
+      <p>No orders found.</p>
+    {% endfor %}
+  </ul>
+  
+{% endif %}
 </body>
 </html>
